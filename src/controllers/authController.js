@@ -1,6 +1,6 @@
-const User = require("../models/userModel");
+const Users = require("../models/userModel");
 const bcrypt = require("bcrypt");
-const { response } = require("express");
+const APIError = require("../utils/errors");
 
 const login = async (req, res) => {
   return res.status(200).json({ message: "Login" });
@@ -9,28 +9,26 @@ const login = async (req, res) => {
 const register = async (req, res) => {
   const { email, password } = req.body;
 
-  const checkUser = await User.findOne({ email: email });
+  const checkUser = await Users.findOne({ email: email });
 
   if (checkUser) {
-    return res.status(400).json({ message: "User already exists" });
+    throw new APIError("User already exists", 401);
   }
 
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(password, salt); //hash the password
   req.body.password = hashPassword;
 
+  console.log(req.body.password);
   try {
-    const userSave = new User({
-      email,
-      password,
-    });
+    const userSave = new Users(req.body);
 
     await userSave
       .save()
-      .then.then((repsonse) => {
+      .then((response) => {
         return res.status(201).json({
           succes: true,
-          data: repsonse,
+          data: response,
           message: "User created successfully",
         });
       })
@@ -42,7 +40,7 @@ const register = async (req, res) => {
         });
       });
   } catch (error) {
-    return res.status(400).json({ message: "Something went wrong" });
+    return res.status(400).json({ message: error.message });
   }
 };
 

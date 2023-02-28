@@ -1,6 +1,7 @@
 const Users = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const APIError = require("../utils/errors");
+const Response = require("../utils/response");
 
 const login = async (req, res) => {
   return res.status(200).json({ message: "Login" });
@@ -20,28 +21,16 @@ const register = async (req, res) => {
   req.body.password = hashPassword;
 
   console.log(req.body.password);
-  try {
-    const userSave = new Users(req.body);
+  const userSave = new Users(req.body);
 
-    await userSave
-      .save()
-      .then((response) => {
-        return res.status(201).json({
-          succes: true,
-          data: response,
-          message: "User created successfully",
-        });
-      })
-      .catch((error) => {
-        return res.status(400).json({
-          succes: false,
-          data: error,
-          message: "Something went wrong",
-        });
-      });
-  } catch (error) {
-    return res.status(400).json({ message: error.message });
-  }
+  await userSave
+    .save()
+    .then((data) => {
+      return new Response(data, "User created successfully").created(res);
+    })
+    .catch((error) => {
+      throw new APIError("User not created.", 401);
+    });
 };
 
 module.exports = {

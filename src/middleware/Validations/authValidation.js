@@ -43,7 +43,30 @@ class AuthValidation {
         throw new APIError(error.details[0].message, 400 || error.detail);
       }
     }
+    next();
+  };
 
+  static login = async (req, res, next) => {
+    try {
+      await joi
+        .object({
+          email: joi.string().email().trim().required().messages({
+            "string.empty": `Email cannot be an empty field`,
+            "string.email": `Email should be a valid email`,
+            "any.required": `Email is a required field`,
+          }),
+          password: joi.string().trim().required().min(6).messages({
+            "string.empty": `Password cannot be an empty field`,
+            "string.min": `Password should have a minimum length of {#limit}`,
+            "any.required": `Password is a required field`,
+          }),
+        })
+        .validateAsync(req.body); // <---
+    } catch (error) {
+      if (error.details[0].message && error.details) {
+        throw new APIError(error.details[0].message, 400 || error.detail);
+      }
+    }
     next();
   };
 }

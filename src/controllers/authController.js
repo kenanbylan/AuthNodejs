@@ -2,14 +2,27 @@ const Users = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const APIError = require("../utils/errors");
 const Response = require("../utils/response");
+const { createToken } = require("../middleware/Token/auth");
 
 const login = async (req, res) => {
-  return res.status(200).json({ message: "Login" });
+  const { email, password } = req.body;
+  const user = await Users.findOne({ email: email });
+
+  if (user) {
+    const validPass = await bcrypt.compare(password, user.password);
+    if (!validPass) {
+      throw new APIError("Invalid password", 401);
+    }
+
+    createToken(user, res); // <---Token is created here and sent to the client
+    //return new Response(user, "Login successfully").success(res);
+  } else {
+    throw new APIError("User not found", 401);
+  }
 };
 
 const register = async (req, res) => {
   const { email, password } = req.body;
-
   const checkUser = await Users.findOne({ email: email });
 
   if (checkUser) {
@@ -33,7 +46,12 @@ const register = async (req, res) => {
     });
 };
 
+const me = async (req, res) => {
+  return Response(req.user, "User found").success(res);
+};
+
 module.exports = {
   login,
   register,
+  me,
 };

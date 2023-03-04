@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../../models/userModel");
+const APIError = require("../../utils/errors");
+require("dotenv");
 
 const createToken = async (user, res) => {
   console.log(user);
@@ -9,9 +11,13 @@ const createToken = async (user, res) => {
     name: user.name,
   };
 
+  // const token = jwt.sign({username:user.username,
+  //role:{name:_role.name, sections:sections_fetched}},
+  // 'secret', {expiresIn : '24h'}, process.env.JWT_TOKEN_SECRET);
+
   const token = await jwt.sign(payload, process.env.JWT_SECRET_KEY, {
     algorithm: "HS512",
-    expiresIn: process.env.JWT_EXPIRES_IN,
+    expiresIn: "2h", // or process.env.JWT_EXPIRES_IN
   });
 
   res.status(200).json({
@@ -21,44 +27,44 @@ const createToken = async (user, res) => {
   });
 };
 
+//token control middleware function for protected routes
 const tokenCheck = async (req, res, next) => {
-  const headerToken =
-    req.headers["authorization"] &&
-    req.headers["authorization"].startsWith("Bearer ");
-  // if (typeof headerToken !== "undefined") {
-  //   const bearer = headerToken.split(" ");
-  //   const bearerToken = bearer[1];
-  //   req.token = bearerToken;
+  // const headerToken =
+  //   req.headers.authorization &&
+  //   req.headers.authorization.startsWith("Bearer ");
+
+  // if (!headerToken) {
+  //   throw new APIError("Token not found", 401);
   // }
 
-  console.log("headerToken, ", headerToken);
+  // const token = req.headers.authorization.split(" ")[1]; //boşluklara ayır ve 1. elemanı al
 
-  if (!headerToken) {
-    throw new APIError("Token not found", 401);
-  }
+  const token =
+    req.body.token || req.query.token || req.headers["x-access-token"];
 
-  const token = req.headers.authorization.split(" ")[1];
+  console.log("token :", token);
 
-  console.log("token, ", token);
-
-  //dönen token , kontrol edilir ve geçersiz ise token çözümlenmez.
-  await jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
+  await jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, decoded) => {
+    console.log("decoded :", decoded);
+    console.log("err :", err);
     if (err) {
-      throw new APIError("Invalid token", 401);
+      throw new APIError("Token is not valid", 401); //401 unauthorized
     }
 
-    const userInfo = User.findById(decoded.sub).select(
-      "_id name surname email phone password"
-    );
+    //Eğer çözümlenmiş token içindeki sub değeri ile veritabanında bulunan user._id değeri eşleşmiyorsa
+    //hata fırlat
+    const userInfo = await User.findById(decoded.sub).select(
+      "_id name email phone"
+    ); //decoded.sub = user._id
 
     if (!userInfo) {
-      throw new APIError("User not found", 401);
+      throw new APIError("User not found and Invalid Token.", 404);
     }
 
-    req.user = userInfo; // <--- req.user is now available in the next middleware
-
-    next();
+    req.user = userInfo;
   });
+
+  next();
 };
 
 module.exports = {

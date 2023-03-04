@@ -10,6 +10,7 @@ const login = async (req, res) => {
 
   if (user) {
     const validPass = await bcrypt.compare(password, user.password);
+
     if (!validPass) {
       throw new APIError("Invalid password", 401);
     }
@@ -47,7 +48,11 @@ const register = async (req, res) => {
 };
 
 const me = async (req, res) => {
-  return Response(req.user, "User found").success(res);
+  console.log("şuan authController.js deyim");
+
+  //return Response(req.user, "User found").success(res);
+
+  return new Response(req.user, "User found").success(res); //Success response 200 OK
 };
 
 module.exports = {

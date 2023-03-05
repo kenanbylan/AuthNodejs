@@ -4,7 +4,7 @@ require("dotenv").config(); //dotenv is a zero-dependency module that loads envi
 require("./src/db/DBConnection"); //DBConnection.js
 const router = require("./src/routers/index");
 const app = express();
-
+const path = require("path");
 const mongoSanitize = require("express-mongo-sanitize"); //mongoDb güvenlik açığı için kullanılır.
 
 //Cors İmplementing
@@ -15,15 +15,26 @@ const port = process.env.PORT || 3001;
 
 const errorHandlerMiddleware = require("./src/middleware/errorHandler");
 
-//Middleware
-app.use(cors(corsSettings)); //Cors ayarları implemente edildi.
-app.use(cors()); //Cors ayarları implemente edildi. (Bu şekilde de kullanılabilir.
+//Rate Limiting Implementing
+const rateLimit = require("./src/middleware/ApiRateLimit/rateLimit");
 
 app.use(express.json()); //Used to parse JSON bodies
 app.use(express.json({ limit: "50mb" })); //Used to parse JSON bodies
 app.use(
   express.urlencoded({ limit: "50mb", extended: true, parameterLimit: 100000 })
 ); //Parse URL-encoded bodies
+
+//Middleware
+
+app.use(express.static(path.dirname(__dirname, "/public")));
+app.use("/public", express.static(__dirname));
+
+//Cors ayarları implemente edildi.
+app.use(cors(corsSettings)); //Cors ayarları implemente edildi.
+app.use(cors()); //Cors ayarları implemente edildi. (Bu şekilde de kullanılabilir.
+
+//Rate Limiting
+app.use("/api", rateLimit);
 
 //Error Handler Middleware
 app.use(errorHandlerMiddleware);

@@ -29,6 +29,17 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    reset: {
+      code: {
+        type: String,
+        trim: true,
+        default: null,
+      },
+      time: {
+        type: Date,
+        default: null,
+      },
+    },
   },
   { collection: "User", timestamps: true }
 );

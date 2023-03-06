@@ -6,6 +6,10 @@ const router = require("./src/routers/index");
 const app = express();
 const path = require("path");
 const mongoSanitize = require("express-mongo-sanitize"); //mongoDb güvenlik açığı için kullanılır.
+const momentTimezone = require("moment-timezone"); //Tarih ve saat işlemleri için kullanılır.
+
+//saat dilimi ayarları tam olarak 3 saat geriden geliyor. Bu yüzden 3 saat ekledim.
+momentTimezone.tz.setDefault("Europe/Istanbul"); //Tarih ve saat işlemleri için kullanılır.
 
 //Cors İmplementing
 const cors = require("cors");

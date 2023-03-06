@@ -67,7 +67,50 @@ const tokenCheck = async (req, res, next) => {
   next();
 };
 
+//authcontrollerdan yani dönen user bilgilerinden token oluştur.
+const createTemporaryToken = async (userId, email) => {
+  //payload tokenin içerisine gizlenecek değerler.
+  const payload = {
+    sub: userId, // <--- jwt.io will show this as "sub"
+    email: email,
+  };
+
+  const token = await jwt.sign(payload, process.env.JWT_TEMPORARY_KEY, {
+    algorithm: "HS512",
+    expiresIn: process.env.JWT_EXPIRES_IN_TEMPORARY, // or process.env.JWT_EXPIRES_IN
+  });
+
+  return token;
+};
+
+const decodedTemporaryToken = async (tempToken) => {
+  const token = tempToken.split(" ")[1]; //boşluklara ayır ve 1. elemanı al
+
+  await jwt.verify(
+    tempToken,
+    process.env.JWT_TEMPORARY_KEY,
+    async (err, decoded) => {
+      if (err) {
+        throw new APIError("Token is not valid", 401); //401 unauthorized
+      }
+
+      //decoded_sub = user._id
+      const userInfo = User.findById(decoded.sub).select(
+        "_id name surname email phone"
+      );
+
+      if (!userInfo) {
+        throw new APIError("User not found and Invalid Token.", 404);
+      }
+
+      return userInfo;
+    }
+  );
+};
+
 module.exports = {
   createToken,
   tokenCheck,
+  createTemporaryToken,
+  decodedTemporaryToken,
 };

@@ -3,7 +3,11 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto"); //Node.js'ın kendi kütüphanesi. Şifreleme için kullanılıyor.
 const APIError = require("../utils/errors");
 const Response = require("../utils/response");
-const { createToken } = require("../middleware/Token/auth");
+const {
+  createToken,
+  createTemporaryToken,
+  decodedTemporaryToken,
+} = require("../middleware/Token/auth");
 const User = require("../models/userModel");
 const sendMailMailer = require("../utils/sendMail");
 const moment = require("moment");
@@ -101,9 +105,68 @@ const forgetPassword = async (req, res) => {
   return new Response(sendMailMailer, "Please mailbox controle").success(res);
 };
 
+const resetCodeCheck = async (req, res) => {
+  const { email, code } = req.body;
+
+  const userInfo = await User.findOne({ email: email }).select(
+    "_id name surname email phone reset"
+  ); //bilgileri seçiyoruz.
+
+  if (!userInfo) {
+    throw new APIError("User not found", 401);
+  }
+
+  console.log("userInfo reset time : ", userInfo);
+
+  const dbTime = moment(userInfo.reset.time);
+  const nowTime = moment(new Date());
+
+  const timeDiff = dbTime.diff(nowTime, "minutes"); //dbTime ile nowTime arasındaki farkı buluyoruz.
+  console.log("zaman farkı : ", timeDiff);
+
+  if (timeDiff <= 0) {
+    throw new APIError("Code is expired", 401);
+  }
+
+  if (userInfo.reset.code !== code) {
+    throw new APIError("Invalid code", 401);
+  }
+
+  const tempToken = await createTemporaryToken(userInfo._id, userInfo.email);
+  //Kullanıcıya geçici token oluşturuyoruz.
+
+  return new Response({ tempToken }, "Code is valid").success(res);
+};
+
+const resetPassword = async (req, res) => {
+  const { password, tempToken } = req.body;
+
+  const decodedToken = decodedTemporaryToken(tempToken);
+
+  console.log("decodedToken : ", decodedToken); //Geçici tokeni çözüyoruz.
+
+  const hashPassword = await bcrypt.hash(password, 10); //resetledikten sonra yine haslıyoruz.
+
+  //çözümlenmiş token içerisindeki _id ile kullanıcıyı buluyoruz. Ve sadece şifre bloğunu güncelliyoruz.
+  await User.findByIdAndUpdate(
+    { _id: decodedToken._id },
+    {
+      reset: {
+        code: null,
+        time: null,
+      },
+      password: hashPassword,
+    }
+  );
+
+  return new Response(decodedToken, "Password reset successfully").success(res);
+};
+
 module.exports = {
   login,
   register,
   me,
   forgetPassword,
+  resetCodeCheck,
+  resetPassword,
 };

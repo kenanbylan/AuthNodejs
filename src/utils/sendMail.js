@@ -3,18 +3,19 @@ require("dotenv").config();
 
 const sendMailMailer = async (mailOptions) => {
   const transporter = nodeMailer.createTransport({
-    // host: "smtp.gmail.com",
+    host: "smtp.gmail.com",
     service: "gmail",
-    // port: 587, //465 bu iki port mesaj gönderimi için kullanılır. 587 submmission portu olarak kullanılır.
-    // secure: false, //gönderilecek mesajın şifrelenip şifrelenmeyeceğini belirtir. true ise şifrelenir.
+    port: 587, //465 bu iki port mesaj gönderimi için kullanılır. 587 submmission portu olarak kullanılır.
+    secure: false, //gönderilecek mesajın şifrelenip şifrelenmeyeceğini belirtir. true ise şifrelenir.
     auth: {
-      user: "stocktracking1system.gmail.com",
-      pass: "lqhlzuvjwgzzagzi",
+      user: "stockbackend54@gmail.com", // here use your real email
+      pass: "aptofdmksvjalaxv", // put your password correctly (not in this question please)
     },
   });
 
   let infoData = await transporter.sendMail(mailOptions, (err, info) => {
     if (err) {
+      console.log(err.message);
       console.log("Error occured while sending mail : ", err);
     } else {
       console.log("Mail sent successfully : ", info);
@@ -22,7 +23,7 @@ const sendMailMailer = async (mailOptions) => {
   });
 
   console.log("Message sent: %s", infoData);
-  //console.log("Preview URL: %s", nodeMailer.getTestMessageUrl(info));
+  // console.log("Preview URL: %s", nodeMailer.getTestMessageUrl(info));
 };
 
 module.exports = sendMailMailer;

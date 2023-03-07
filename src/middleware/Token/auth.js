@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../../models/userModel");
 const APIError = require("../../utils/errors");
+const Response = require("../../utils/response");
 require("dotenv");
 
 const createToken = async (user, res) => {
@@ -84,25 +85,28 @@ const createTemporaryToken = async (userId, email) => {
 };
 
 const decodedTemporaryToken = async (tempToken) => {
-  const token = tempToken.split(" ")[1]; //boşluklara ayır ve 1. elemanı al
+  //  console.log("tempToken :", tempToken);
+
+  //  const token = tempToken.split(" ")[1]; //boşluklara ayır ve 1. elemanı al
+
+  // console.log("token :", token);
 
   await jwt.verify(
     tempToken,
     process.env.JWT_TEMPORARY_KEY,
     async (err, decoded) => {
       if (err) {
+        console.log("err :", err.message);
+        //return new Response(null, err.message).error401(res);
         throw new APIError("Token is not valid", 401); //401 unauthorized
       }
-
       //decoded_sub = user._id
       const userInfo = User.findById(decoded.sub).select(
         "_id name surname email phone"
       );
-
       if (!userInfo) {
         throw new APIError("User not found and Invalid Token.", 404);
       }
-
       return userInfo;
     }
   );

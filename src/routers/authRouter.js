@@ -5,6 +5,7 @@ const {
   me,
   forgetPassword,
   resetCodeCheck,
+  resetPassword,
 } = require("../controllers/authController");
 const AuthValidation = require("../middleware/Validations/authValidation");
 const { tokenCheck } = require("../middleware/Token/auth");
@@ -18,6 +19,6 @@ router.post("/forget-password", forgetPassword);
 
 router.post("/reset-code-check", resetCodeCheck);
 
-router.post("/reset-password", resetCodeCheck);
+router.post("/reset-password", resetPassword);
 
 module.exports = router;

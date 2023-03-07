@@ -108,6 +108,9 @@ const forgetPassword = async (req, res) => {
 const resetCodeCheck = async (req, res) => {
   const { email, code } = req.body;
 
+  console.log("email : ", email);
+  console.log("code : ", code);
+
   const userInfo = await User.findOne({ email: email }).select(
     "_id name surname email phone reset"
   ); //bilgileri seçiyoruz.
@@ -116,9 +119,9 @@ const resetCodeCheck = async (req, res) => {
     throw new APIError("User not found", 401);
   }
 
-  console.log("userInfo reset time : ", userInfo);
-
   const dbTime = moment(userInfo.reset.time);
+  //ıso format
+
   const nowTime = moment(new Date());
 
   const timeDiff = dbTime.diff(nowTime, "minutes"); //dbTime ile nowTime arasındaki farkı buluyoruz.
@@ -132,8 +135,12 @@ const resetCodeCheck = async (req, res) => {
     throw new APIError("Invalid code", 401);
   }
 
+  console.log("userInfo_id : ", userInfo);
+
   const tempToken = await createTemporaryToken(userInfo._id, userInfo.email);
   //Kullanıcıya geçici token oluşturuyoruz.
+
+  console.log("createTemporaryToken tempToken : ", tempToken);
 
   return new Response({ tempToken }, "Code is valid").success(res);
 };
@@ -141,9 +148,11 @@ const resetCodeCheck = async (req, res) => {
 const resetPassword = async (req, res) => {
   const { password, tempToken } = req.body;
 
+  console.log("password : ", password);
+  console.log("tempToken : ", tempToken);
   const decodedToken = decodedTemporaryToken(tempToken);
 
-  console.log("decodedToken : ", decodedToken); //Geçici tokeni çözüyoruz.
+  console.log("decodedToken : ", JSON.stringify(decodedToken));
 
   const hashPassword = await bcrypt.hash(password, 10); //resetledikten sonra yine haslıyoruz.
 

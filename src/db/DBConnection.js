@@ -1,10 +1,15 @@
+require("dotenv").config;
+
 const mongoose = require("mongoose");
 
 mongoose
-  .connect(process.env.DB_Url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    "mongodb://localhost:27017/StockBackendAPI?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => {
     console.log("Connected to database successfully!");
   })
@@ -13,5 +18,3 @@ mongoose
   });
 
 module.exports = mongoose;
-
-// Path: src/db/DBConnection.js

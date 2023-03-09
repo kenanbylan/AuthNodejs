@@ -7,6 +7,7 @@ const app = express();
 const path = require("path");
 const mongoSanitize = require("express-mongo-sanitize"); //mongoDb güvenlik açığı için kullanılır.
 const momentTimezone = require("moment-timezone"); //Tarih ve saat işlemleri için kullanılır.
+const port = process.env.PORT || 8080;
 
 //saat dilimi ayarları tam olarak 3 saat geriden geliyor. Bu yüzden 3 saat ekledim.
 momentTimezone.tz.setDefault("Europe/Istanbul"); //Tarih ve saat işlemleri için kullanılır.
@@ -14,8 +15,6 @@ momentTimezone.tz.setDefault("Europe/Istanbul"); //Tarih ve saat işlemleri içi
 //Cors İmplementing
 const cors = require("cors");
 const corsSettings = require("./src/Helper/corsSettings");
-
-const port = process.env.PORT || 3001;
 
 const errorHandlerMiddleware = require("./src/middleware/errorHandler");
 
@@ -29,7 +28,6 @@ app.use(
 ); //Parse URL-encoded bodies
 
 //Middleware
-
 app.use(express.static(path.dirname(__dirname, "/public")));
 app.use("/public", express.static(__dirname));
 
@@ -56,7 +54,7 @@ app.use("/api", router);
 app.get("/", (req, res) => {
   res.send("Hello World! My Api");
 });
-// Path: app.js
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

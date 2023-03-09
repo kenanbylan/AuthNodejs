@@ -8,8 +8,8 @@ const sendMailMailer = async (mailOptions) => {
     port: 587, //465 bu iki port mesaj gönderimi için kullanılır. 587 submmission portu olarak kullanılır.
     secure: false, //gönderilecek mesajın şifrelenip şifrelenmeyeceğini belirtir. true ise şifrelenir.
     auth: {
-      user: "stockbackend54@gmail.com", // here use your real email
-      pass: "aptofdmksvjalaxv", // put your password correctly (not in this question please)
+      user: process.env.EMAIL, // here use your real email
+      pass: process.env.PASSWORD, // put your password correctly (not in this question please)
     },
   });
 

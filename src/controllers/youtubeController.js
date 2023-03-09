@@ -14,8 +14,8 @@ const youtube = google.youtube({
 //     auth: "AIzaSyDViRgGFcrAH4EgaoEVbeIGyF4Uzo5xsoc",
 //   });
 
-//   // const url =
-//   //   "https://youtube.googleapis.com/youtube/v3/search?part=id%2Csnippet&maxResults=10&q=AndreoBee&type=channel&key=[YOUR_API_KEY]";
+// const url =
+//   "https://youtube.googleapis.com/youtube/v3/search?part=id%2Csnippet&maxResults=10&q=AndreoBee&type=channel&key=[YOUR_API_KEY]";
 
 //   const res = await youtube.channels.list({
 //     part: "snippet,id",

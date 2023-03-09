@@ -1,8 +1,8 @@
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const User = require("../../models/userModel");
 const APIError = require("../../utils/errors");
 const Response = require("../../utils/response");
-require("dotenv");
 
 const createToken = async (user, res) => {
   console.log(user);

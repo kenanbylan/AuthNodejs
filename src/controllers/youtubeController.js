@@ -5,7 +5,8 @@ const Response = require("../utils/response");
 
 const youtube = google.youtube({
   version: "v3",
-  auth: "AIzaSyDViRgGFcrAH4EgaoEVbeIGyF4Uzo5xsoc", // YouTube Data API v3 API anahtarınızı buraya ekleyin
+  // auth:  "AIzaSyDViRgGFcrAH4EgaoEVbeIGyF4Uzo5xsoc", // YouTube Data API v3 API anahtarınızı buraya ekleyin
+  auth: process.env.YOUTUBE_API_KEY,
 });
 
 // async function getChannelId(channelName) {

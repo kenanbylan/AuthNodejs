@@ -3,11 +3,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto"); //Node.js'ın kendi kütüphanesi. Şifreleme için kullanılıyor.
 const APIError = require("../utils/errors");
 const Response = require("../utils/response");
-const {
-  createToken,
-  createTemporaryToken,
-  decodedTemporaryToken,
-} = require("../middleware/Token/auth");
+const { createToken, createTemporaryToken, decodedTemporaryToken } = require("../middleware/Token/auth");
 const User = require("../models/userModel");
 const sendMailMailer = require("../utils/sendMail");
 const moment = require("moment");
@@ -66,9 +62,7 @@ const me = async (req, res) => {
 const forgetPassword = async (req, res) => {
   const { email } = req.body;
 
-  const userInfo = await User.findOne({ email: email }).select(
-    "name surname email phone"
-  ); //Find user by email address. Selecten sonra gelecek olan bilgileri seçiyoruz.
+  const userInfo = await User.findOne({ email: email }).select("name surname email phone"); //Find user by email address. Selecten sonra gelecek olan bilgileri seçiyoruz.
 
   if (!userInfo) {
     throw new APIError("User not found", 401);
@@ -111,9 +105,7 @@ const resetCodeCheck = async (req, res) => {
   console.log("email : ", email);
   console.log("code : ", code);
 
-  const userInfo = await User.findOne({ email: email }).select(
-    "_id name surname email phone reset"
-  ); //bilgileri seçiyoruz.
+  const userInfo = await User.findOne({ email: email }).select("_id name surname email phone reset"); //bilgileri seçiyoruz.
 
   if (!userInfo) {
     throw new APIError("User not found", 401);

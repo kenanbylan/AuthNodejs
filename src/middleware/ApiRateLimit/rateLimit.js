@@ -14,6 +14,7 @@ const RateLimit = rateLimit({
     }
     return 100;
   },
+
   message: {
     status: 429,
     message: "Too many requests from this IP, please try again after an hour",

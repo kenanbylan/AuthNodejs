@@ -8,6 +8,23 @@ const path = require("path");
 const mongoSanitize = require("express-mongo-sanitize"); //mongoDb güvenlik açığı için kullanılır.
 const momentTimezone = require("moment-timezone"); //Tarih ve saat işlemleri için kullanılır.
 const port = process.env.PORT || 8080;
+// swagger
+const swaggerUi = require("swagger-ui-express");
+const swaggerFile = require("./swagger-output.json");
+
+const options = {
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "My API",
+      version: "1.0.0",
+      description: "My API description",
+    },
+  },
+
+  // apis: ["./routes/*.js"], // API yollarınızın yolunu belirtin
+  apis: ["./routers/*.js", "./routers/**/*.js"],
+};
 
 //saat dilimi ayarları tam olarak 3 saat geriden geliyor. Bu yüzden 3 saat ekledim.
 momentTimezone.tz.setDefault("Europe/Istanbul"); //Tarih ve saat işlemleri için kullanılır.
@@ -23,9 +40,7 @@ const rateLimit = require("./src/middleware/ApiRateLimit/rateLimit");
 
 app.use(express.json()); //Used to parse JSON bodies
 app.use(express.json({ limit: "50mb" })); //Used to parse JSON bodies
-app.use(
-  express.urlencoded({ limit: "50mb", extended: true, parameterLimit: 100000 })
-); //Parse URL-encoded bodies
+app.use(express.urlencoded({ limit: "50mb", extended: true, parameterLimit: 100000 })); //Parse URL-encoded bodies
 
 //Middleware
 app.use(express.static(path.dirname(__dirname, "/public")));
@@ -50,6 +65,8 @@ app.use(errorHandlerMiddleware);
 // );
 
 app.use("/api", router);
+
+app.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.get("/", (req, res) => {
   res.send("Hello World! My Api");

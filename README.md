@@ -1,5 +1,3 @@
-# StockBackendAPI
-
 # Stock Backend
 
 ## Project about

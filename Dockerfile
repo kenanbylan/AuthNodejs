@@ -1,20 +1,21 @@
-FROM node:18-alpine 
+# Base image
+FROM node:18-alpine
+
 RUN apk update && apk upgrade
 
+# Create app directory
 WORKDIR /app
 
-COPY package*.json ./
+# Install app dependencies
+COPY package*.json /app
+RUN npm ci
+RUN npm ci swagger-ui-express
 
+# Bundle app source
+COPY . /app
 
-RUN npm install
-RUN npm install swagger-ui-express
-
-
-COPY . .
-
-
+# Expose port
 EXPOSE 3000
 
-CMD ["node", "app.js"]
-
-
+# Start the app
+CMD [ "npm", "start" ]

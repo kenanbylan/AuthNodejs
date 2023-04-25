@@ -63,6 +63,6 @@ docker build -t node-stock-backend .
 docker compose up -d
 ```
 
-After running the application, you can access the swagger file by going to `http://localhost:3000/docs`.
+After running the application, you can access the swagger file by going to `http://localhost:3000/doc`.
 
 <br>

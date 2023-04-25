@@ -1,39 +1,25 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "1.0.0",
-    "title": "REST API",
-    "description": ""
+    "version": "3.0.0",
+    "title": "Stock Tracking Management Backend Rest API",
+    "description": "It is an open api design of the backend project written for the stock market tracking mobile application. Node js and Express js and Mongo DB project were developed.",
+    "contact": {
+      "name": "Kenan Baylan",
+      "email": "kenan.baylan4654@gmail.com"
+    },
+    "license": {
+      "name": "MIT License",
+      "url": "https://www.mit.edu/~amini/LICENSE.md"
+    }
   },
   "host": "localhost:3000",
   "basePath": "/",
-  "schemes": ["http"],
+  "schemes": ["http", "https"],
   "paths": {
-    "/login": {
+    "/api/auth/reset-password": {
       "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {}
-      }
-    },
-    "/register": {
-      "post": {
+        "tags": ["reset password"],
         "description": "",
         "parameters": [
           {
@@ -45,26 +31,94 @@
                 "password": {
                   "example": "123456"
                 },
+                "tempToken": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+
+    "/api/auth/login": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
                 "email": {
-                  "example": "kenan.baylan@gmail.com"
+                  "example": "kenan.baylan4654@gmail.com"
                 },
+                "password": {
+                  "example": "123456"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {}
+      }
+    },
+
+    "/api/auth/register": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
                 "name": {
                   "example": "Kenan"
                 },
                 "surname": {
                   "example": "Baylan"
                 },
+                "email": {
+                  "example": "kenan.baylan4654@gmail.com"
+                },
                 "phone": {
-                  "example": "05315748865"
+                  "example": "5315847699"
+                },
+                "password": {
+                  "example": "123456"
                 }
               }
             }
           }
         ],
-        "responses": {}
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
       }
     },
-    "/me": {
+    "/api/auth/me": {
       "get": {
         "description": "",
         "parameters": [
@@ -82,7 +136,7 @@
         "responses": {}
       }
     },
-    "/forget-password": {
+    "/api/auth/forget-password": {
       "post": {
         "description": "",
         "parameters": [
@@ -93,7 +147,7 @@
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "example": "melih.afsa@gmail.com"
                 }
               }
             }
@@ -102,7 +156,7 @@
         "responses": {}
       }
     },
-    "/reset-code-check": {
+    "/api/auth/reset-code-check": {
       "post": {
         "description": "",
         "parameters": [
@@ -125,7 +179,7 @@
         "responses": {}
       }
     },
-    "/reset-password": {
+    "/api/auth/reset-password": {
       "post": {
         "description": "",
         "parameters": [
@@ -148,7 +202,7 @@
         "responses": {}
       }
     },
-    "/get-channel": {
+    "/api/youtube/get-channel": {
       "post": {
         "description": "",
         "parameters": [
@@ -159,163 +213,23 @@
               "type": "object",
               "properties": {
                 "channelName": {
-                  "example": "any"
+                  "example": "GoogleDevelopers"
                 }
               }
             }
           }
         ],
-        "responses": {}
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {}
-      }
-    },
-    "/auth/register": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "password": {
-                  "example": "any"
-                },
-                "email": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {}
-      }
-    },
-    "/auth/me": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "x-access-token",
-            "in": "header",
-            "type": "string"
+        "responses": {
+          "200": {
+            "description": "OK"
           },
-          {
-            "name": "token",
-            "in": "query",
-            "type": "string"
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
-        ],
-        "responses": {}
-      }
-    },
-    "/auth/forget-password": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {}
-      }
-    },
-    "/auth/reset-code-check": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
-                },
-                "code": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {}
-      }
-    },
-    "/auth/reset-password": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "password": {
-                  "example": "any"
-                },
-                "tempToken": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {}
-      }
-    },
-    "/youtube/get-channel": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "channelName": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {}
+        }
       }
     }
   }
